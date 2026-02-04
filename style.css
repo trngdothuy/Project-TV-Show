@@ -1,3 +1,8 @@
 #root {
   color: red;
 }
+
+.film-card-div {
+  display:flex;
+  flex-direction: column;
+}
