@@ -6,7 +6,7 @@ function setup() {
 
 function makePageForEpisodes(episodeList) {
   const rootElem = document.getElementById("root");
-  rootElem.textContent = `Got ${episodeList.length} episode(s)`;
+  // rootElem.textContent = `Got ${episodeList.length} episode(s)`;
   rootElem.append(...episodeList.map(makeFilmCard))
 }
 
@@ -20,17 +20,21 @@ function makeFilmCard({name, season, number, image, summary}) {
 
   let filmTitle = document.createElement("h3")
   // console.log(filmCardDiv)
-  filmTitle.textContent = `${name} - S${season.toString().padStart(2,"0")}E${number.toString().padStart(2, "0")};`  
+  filmTitle.textContent = `${name} - S${season.toString().padStart(2,"0")}E${number.toString().padStart(2, "0")}`  
   // console.log(filmTitle)
 
+  let filmImgDiv = document.createElement("div")
+  filmImgDiv.className = "film-img-div"
   let filmImg = document.createElement("img")
   filmImg.src = image.medium
   filmImg.alt = filmTitle
+  filmImgDiv.append(filmImg)
+
   let filmDescription = document.createElement("div")
   filmDescription.innerHTML = summary
 
   filmTitleDiv.append(filmTitle)
-  filmDescriptionDiv.append(filmImg, filmDescription)
+  filmDescriptionDiv.append(filmImgDiv, filmDescription)
   filmCardDiv.append(filmTitleDiv, filmDescriptionDiv)
   // console.log(filmCardDiv)
 
