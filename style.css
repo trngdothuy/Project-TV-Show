@@ -3,6 +3,11 @@ h1 {
   text-align: center;
 }
 
+.data-source {
+  text-align: center;
+  color: black;
+}
+
 #root {
   background: rgb(231, 228, 228);
   display: flex;
