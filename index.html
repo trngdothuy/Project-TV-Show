@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -10,14 +10,19 @@
 
   <body>
     <h1>TV Show</h1>
-    <p class="data-source"><i>data from <a href="http://TVMaze.com">TVMaze.com</a></i></p>
-    <div id="root">
-    </div>
+    <p class="data-source">
+      <i>data from <a href="http://TVMaze.com">TVMaze.com</a></i>
+    </p>
+    <label for="search">Search Films:</label>
+    <input type="text" id="search" />
+    <!-- <div id="root"></div> -->
+    <!--I remove this since I added the main, so it will not be doubled. I just move the id so the style will also go with it-->
+    <main id="root"></main>
 
     <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
     <script src="episodes.js"></script>
 
     <!-- Loads YOUR javascript code -->
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>
