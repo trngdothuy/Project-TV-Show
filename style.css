@@ -54,4 +54,11 @@ p {
 #search-holder {
   text-align: center;
   margin: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+#displayed-films {
+  padding: 0 10px;
 }

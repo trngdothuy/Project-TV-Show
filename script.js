@@ -2,8 +2,10 @@
 import "./episodes.js"; //I imported the films from the JS so that I can access the function assigned to "allEpisodes"
 //I have also added a type="model" to the script so that this import can work
 
-let searchText = ""; // This is the same with the object property searchterm in the reference as the search text will we stored here as a string.
+let searchText = "";
+// This is the same with the object property searchterm in the reference as the search text will we stored here as a string.
 //I used let since it will change once the user type.
+
 const allEpisodes = getAllEpisodes();
 
 // makePageForEpisodes(allEpisodes);
@@ -47,7 +49,6 @@ function makeFilmCard({ name, season, number, image, summary }) {
   filmTitleDiv.append(filmTitle);
   filmDescriptionDiv.append(filmImgDiv, filmDescription);
   filmCardDiv.append(filmTitleDiv, filmDescriptionDiv);
-  // console.log(filmCardDiv)
 
   return filmCardDiv;
 }
@@ -66,6 +67,9 @@ const render = () => {
   //because I tried to do it one at a time it did not work and has more and messy codes so it's better to search it all at once.
   // I just use a conditional OR. but it is still the same way Alejandro did in the reference.
 
+  const labeldisplay = document.getElementById("displayed-films");
+  labeldisplay.textContent = `Displaying ${filterText.length}/${allEpisodes.length}`;
+
   const filterFilms = filterText.map(makeFilmCard);
   main.append(...filterFilms);
 };
@@ -76,7 +80,6 @@ const searchBox = document.getElementById("search");
 
 const handleSearch = (event) => {
   searchText = event.target.value;
-
   render();
 };
 
