@@ -30,7 +30,7 @@ function makeSelection() {
   allEpisodes.forEach((film) => {
     const option = document.createElement("option");
     option.value = film.name;
-    option.textContent = `${film.name} - S${film.season.toString().padStart(2, "0")}E${film.number.toString().padStart(2, "0")}`;
+    option.textContent = `S${film.season.toString().padStart(2, "0")}E${film.number.toString().padStart(2, "0")} - ${film.name}`;
     selectfilmContainer.appendChild(option);
   });
 }
