@@ -107,14 +107,20 @@ const selected = document.getElementById("film-selector");
 const handleSelection = (event) => {
   selectedEpisode = event.target.value;
   if (selectedEpisode === "default") {
-    //In here I just added an if so that when the value
-    //of the selected target is the "choose the episode" where in I will
-    inputContainer = "default"; //display all of the episodes and just 1 if the selector is used.
-  } else inputContainer = "select"; //I added a default option and a inputContainer wherein
-  render(); //it switches. See its used in render();
+    inputContainer = "default";
+  } else inputContainer = "select";
+  render();
 };
 
 selected.addEventListener("change", handleSelection);
+
+//Line 109-111
+//In here I just added an if so that when the value
+//of the selected target is the "choose the episode" where in I will
+//display all of the episodes and just 1 if the selector is used.
+//I added a default option and a inputContainer wherein
+//it switches. See its used in render();
+
 // window.onload = setup;
 //I removed this since the function setup is removed and is not necessary. I tried to do it with setup,
 //but it made the logic messy, in this way it is clear and easy to understand.
