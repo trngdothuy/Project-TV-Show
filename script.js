@@ -6,6 +6,9 @@ let searchText = "";
 // This is the same with the object property searchterm in the reference as the search text will we stored here as a string.
 //I used let since it will change once the user type.
 
+let selectedEpisode = "";
+let inputContainer = "default"; //switcher for a user use selector or search. see handleSelector or render().
+
 const allEpisodes = getAllEpisodes();
 
 // makePageForEpisodes(allEpisodes);
@@ -17,10 +20,20 @@ const allEpisodes = getAllEpisodes();
 // }
 
 //I have removed the function since I think it is no longer needed as we will only load
-//searchtext
-//getting the episodes
-//and render
+//searchtext getting the episodes and render
 //This way we can do the state of searching.
+
+//SELECTION FUNCTION
+function makeSelection() {
+  const selectfilmContainer = document.getElementById("film-selector");
+
+  allEpisodes.forEach((film) => {
+    const option = document.createElement("option");
+    option.value = film.name;
+    option.textContent = `${film.name}`;
+    selectfilmContainer.appendChild(option);
+  });
+}
 
 //I didn't change your makeFilmCard :)
 function makeFilmCard({ name, season, number, image, summary }) {
@@ -58,33 +71,60 @@ const render = () => {
   const main = document.querySelector("main");
   main.innerHTML = "";
 
-  const filterText = allEpisodes.filter(
-    (film) =>
-      film.name.includes(searchText) || film.summary.includes(searchText),
-  );
+  //In here I just used a conditional to be able to decide what the user did, if it will
+  //use the selector or the search.
 
-  //In line 59-61, what i did is to be able to search in the title (name) and the summary all together
-  //because I tried to do it one at a time it did not work and has more and messy codes so it's better to search it all at once.
-  // I just use a conditional OR. but it is still the same way Alejandro did in the reference.
+  //Basically I just did two versions of the render code based on their own input
+  if (inputContainer === "default") {
+    const filterText = allEpisodes.filter(
+      (film) =>
+        film.name.includes(searchText) || film.summary.includes(searchText),
+    );
 
-  const labeldisplay = document.getElementById("displayed-films");
-  labeldisplay.textContent = `Displaying ${filterText.length}/${allEpisodes.length}`;
+    const filterFilms = filterText.map(makeFilmCard);
+    main.append(...filterFilms);
 
-  const filterFilms = filterText.map(makeFilmCard);
-  main.append(...filterFilms);
+    const labeldisplay = document.getElementById("displayed-films");
+    labeldisplay.textContent = `Displaying ${filterText.length}/${allEpisodes.length}`;
+  } else if (inputContainer === "select") {
+    const filterSelected = allEpisodes.filter(
+      (film) => film.name === selectedEpisode,
+    );
+
+    const filterSelectedEpisode = filterSelected.map(makeFilmCard);
+    main.append(...filterSelectedEpisode);
+
+    const labeldisplay = document.getElementById("displayed-films");
+    labeldisplay.textContent = `Displaying ${filterSelectedEpisode.length}/${allEpisodes.length}`;
+  }
 };
 
 render();
+makeSelection(); //I separated this so it will be clean and not messy. the purpose of this is just to show the list in the beginning.
 
 const searchBox = document.getElementById("search");
 
 const handleSearch = (event) => {
   searchText = event.target.value;
+  inputContainer = "default";
   render();
 };
 
 searchBox.addEventListener("input", handleSearch);
 
+//handleSelection
+const selected = document.getElementById("film-selector");
+const handleSelection = (event) => {
+  selectedEpisode = event.target.value;
+  if (selectedEpisode === "default") {
+    //In here I just added an if so that when the value
+    //of the selected target is the "choose the episode" where in I will
+    inputContainer = "default"; //display all of the episodes and just 1 if the selector is used.
+  } else inputContainer = "select"; //I added a default option and a inputContainer wherein
+  render(); //it switches. See its used in render();
+};
+
+selected.addEventListener("change", handleSelection);
 // window.onload = setup;
 //I removed this since the function setup is removed and is not necessary. I tried to do it with setup,
 //but it made the logic messy, in this way it is clear and easy to understand.

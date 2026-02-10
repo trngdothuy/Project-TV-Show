@@ -62,3 +62,7 @@ p {
 #displayed-films {
   padding: 0 10px;
 }
+
+#film-selector {
+  margin: 0 10px;
+}
