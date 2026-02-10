@@ -78,7 +78,8 @@ const render = () => {
   if (inputContainer === "default") {
     const filterText = allEpisodes.filter(
       (film) =>
-        film.name.includes(searchText) || film.summary.includes(searchText),
+        film.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        film.summary.toLowerCase().includes(searchText.toLowerCase),
     );
 
     const filterFilms = filterText.map(makeFilmCard);
