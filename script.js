@@ -6,10 +6,12 @@ let state = {
   inputContainer: "default"
 }
 
-const url = "https://api.tvmaze.com/shows/82/episodes"
-
 const fetchFilms = async () => {
+  const url = "https://api.tvmaze.com/shows/82/episodes"
   const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Response status: ${response.status}`)
+  }
   return await response.json()
 }
 
@@ -17,6 +19,10 @@ fetchFilms().then((films) => {
   state.films = films
   render();
   makeSelection(); 
+}).catch((error) => {
+  console.log(error)
+  document.querySelector("main").innerHTML =
+    "Failed to load data. Please try again later.";
 })
 
 //SELECTION FUNCTION
