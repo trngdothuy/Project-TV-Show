@@ -19,7 +19,7 @@ h1 {
 
 .film-card-div {
   background-color: aliceblue;
-  display:flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
   width: 20rem;
@@ -47,6 +47,22 @@ h1 {
 }
 
 p {
-  font-size: 0,9rem;
+  font-size: 0, 9rem;
   color: grey;
+}
+
+#search-holder {
+  text-align: center;
+  margin: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+#displayed-films {
+  padding: 0 10px;
+}
+
+#film-selector {
+  margin: 0 10px;
 }
