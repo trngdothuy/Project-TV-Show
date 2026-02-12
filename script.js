@@ -1,25 +1,29 @@
-//You can edit ALL of the code here
-import "./episodes.js"; //I imported the films from the JS so that I can access the function assigned to "allEpisodes"
-//I have also added a type="model" to the script so that this import can work
+// I store every data that will change in state
+let state = {
+  films: [],
+  searchText: "",
+  selectedEpisode: "",
+  inputContainer: "default"
+}
 
-let searchText = "";
-// This is the same with the object property searchterm in the reference as the search text will we stored here as a string.
-//I used let since it will change once the user type.
+const url = "https://api.tvmaze.com/shows/82/episodes"
 
-let selectedEpisode = "";
-let inputContainer = "default"; //switcher for a user use selector or search. see handleSelector or render().
+const fetchFilms = async () => {
+  const response = await fetch(url)
+  return await response.json()
+}
 
-const allEpisodes = getAllEpisodes();
-
-//I have removed the function since I think it is no longer needed as we will only load
-//searchtext getting the episodes and render
-//This way we can do the state of searching.
+fetchFilms().then((films) => {
+  state.films = films
+  render();
+  makeSelection(); 
+})
 
 //SELECTION FUNCTION
 function makeSelection() {
   const selectfilmContainer = document.getElementById("film-selector");
 
-  allEpisodes.forEach((film) => {
+  state.films.forEach((film) => {
     const option = document.createElement("option");
     option.value = film.name;
     option.textContent = `S${film.season.toString().padStart(2, "0")}E${film.number.toString().padStart(2, "0")} - ${film.name}`;
@@ -27,7 +31,6 @@ function makeSelection() {
   });
 }
 
-//I didn't change your makeFilmCard :)
 function makeFilmCard({ name, season, number, image, summary }) {
   const filmCardDiv = document.createElement("div");
   filmCardDiv.className = "film-card-div";
@@ -56,47 +59,45 @@ function makeFilmCard({ name, season, number, image, summary }) {
   return filmCardDiv;
 }
 
-//added the render the same way with Alejandro's code
 const render = () => {
   const main = document.querySelector("main");
   main.innerHTML = "";
 
-  //In here I just used a conditional to be able to decide what the user did, if it will
-  //use the selector or the search.
+  if (state.films.length == 0) {
+    main.innerHTML = "Data loading... Please wait";
+  }
 
-  //Basically I just did two versions of the render code based on their own input
-  if (inputContainer === "default") {
-    const filterText = allEpisodes.filter(
+  if (state.inputContainer === "default") {
+    const filterText = state.films.filter(
       (film) =>
-        film.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        film.summary.toLowerCase().includes(searchText.toLowerCase()),
+        film.name.toLowerCase().includes(state.searchText.toLowerCase()) ||
+        film.summary.toLowerCase().includes(state.searchText.toLowerCase()),
     );
 
     const filterFilms = filterText.map(makeFilmCard);
     main.append(...filterFilms);
 
     const labeldisplay = document.getElementById("displayed-films");
-    labeldisplay.textContent = `Displaying ${filterText.length}/${allEpisodes.length}`;
-  } else if (inputContainer === "select") {
-    const filterSelected = allEpisodes.filter(
-      (film) => film.name === selectedEpisode,
+    labeldisplay.textContent = `Displaying ${filterText.length}/${state.films.length}`;
+  } else if (state.inputContainer === "select") {
+    const filterSelected = state.films.filter(
+      (film) => film.name === state.selectedEpisode,
     );
 
     const filterSelectedEpisode = filterSelected.map(makeFilmCard);
     main.append(...filterSelectedEpisode);
 
     const labeldisplay = document.getElementById("displayed-films");
-    labeldisplay.textContent = `Displaying ${filterSelectedEpisode.length}/${allEpisodes.length}`;
+    labeldisplay.textContent = `Displaying ${filterSelectedEpisode.length}/${state.films.length}`;
   }
 };
 
 render();
-makeSelection(); //I separated this so it will be clean and not messy. the purpose of this is just to show the list in the beginning.
 
 const searchBox = document.getElementById("search");
 const handleSearch = (event) => {
-  searchText = event.target.value;
-  inputContainer = "default";
+  state.searchText = event.target.value;
+  state.inputContainer = "default";
   render();
 };
 
@@ -105,10 +106,10 @@ searchBox.addEventListener("input", handleSearch);
 //handleSelection
 const selected = document.getElementById("film-selector");
 const handleSelection = (event) => {
-  selectedEpisode = event.target.value;
-  if (selectedEpisode === "default") {
-    inputContainer = "default";
-  } else inputContainer = "select";
+  state.selectedEpisode = event.target.value;
+  if (state.selectedEpisode === "default") {
+    state.inputContainer = "default";
+  } else state.inputContainer = "select";
   render();
 };
 
@@ -121,6 +122,3 @@ selected.addEventListener("change", handleSelection);
 //I added a default option and a inputContainer wherein
 //it switches. See its used in render();
 
-// window.onload = setup;
-//I removed this since the function setup is removed and is not necessary. I tried to do it with setup,
-//but it made the logic messy, in this way it is clear and easy to understand.

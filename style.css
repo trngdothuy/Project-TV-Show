@@ -66,3 +66,7 @@ p {
 #film-selector {
   margin: 0 10px;
 }
+
+input {
+  margin-left: 5px;
+}
