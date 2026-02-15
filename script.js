@@ -3,27 +3,48 @@ let state = {
   films: [],
   searchText: "",
   selectedEpisode: "",
-  inputContainer: "default"
+  inputContainer: "default",
+};
+
+
+//FETCH SHOWS
+  async function fetchShows() {
+  const linkshows = "https://api.tvmaze.com/shows";
+  try {
+    const response = await fetch(linkshows);
+    if(!response.ok) {
+      throw new Error("Error Fetching Shows");
+    }
+    const shows = await response.json();
+
+  } 
+  catch (error) {
+    console.error("Error");
+  }
 }
+  
+
 
 const fetchFilms = async () => {
-  const url = "https://api.tvmaze.com/shows/82/episodes"
-  const response = await fetch(url)
+  const url = "https://api.tvmaze.com/shows/82/episodes";
+  const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`Response status: ${response.status}`)
+    throw new Error(`Response status: ${response.status}`);
   }
-  return await response.json()
-}
+  return await response.json();
+};
 
-fetchFilms().then((films) => {
-  state.films = films
-  render();
-  makeSelection(); 
-}).catch((error) => {
-  console.log(error)
-  document.querySelector("main").innerHTML =
-    "Failed to load data. Please try again later.";
-})
+fetchFilms()
+  .then((films) => {
+    state.films = films;
+    render();
+    makeSelection();
+  })
+  .catch((error) => {
+    console.log(error);
+    document.querySelector("main").innerHTML =
+      "Failed to load data. Please try again later.";
+  });
 
 //SELECTION FUNCTION
 function makeSelection() {
@@ -36,6 +57,8 @@ function makeSelection() {
     selectfilmContainer.appendChild(option);
   });
 }
+
+//
 
 function makeFilmCard({ name, season, number, image, summary }) {
   const filmCardDiv = document.createElement("div");
@@ -121,10 +144,11 @@ const handleSelection = (event) => {
 
 selected.addEventListener("change", handleSelection);
 
+
+
 //Line 109-111
 //In here I just added an if so that when the value
 //of the selected target is the "choose the episode" where in I will
 //display all of the episodes and just 1 if the selector is used.
 //I added a default option and a inputContainer wherein
 //it switches. See its used in render();
-
