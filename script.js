@@ -93,12 +93,12 @@ function makeFilmCard({ name, season, number, image, summary }) {
   let filmImgDiv = document.createElement("div");
   filmImgDiv.className = "film-img-div";
   let filmImg = document.createElement("img");
-  filmImg.src = image?.medium ?? "";
+  filmImg.src = image.medium;
   filmImg.alt = filmTitle;
   filmImgDiv.append(filmImg);
 
   let filmDescription = document.createElement("div");
-  filmDescription.innerHTML = summary ?? "";
+  filmDescription.innerHTML = summary;
 
   filmTitleDiv.append(filmTitle);
   filmDescriptionDiv.append(filmImgDiv, filmDescription);
@@ -127,7 +127,7 @@ const render = () => {
     const filterText = state.films.filter(
       (film) =>
         film.name.toLowerCase().includes(state.searchText.toLowerCase()) ||
-        (film.summary ?? "").toLowerCase().includes(state.searchText.toLowerCase()),
+        (film.summary).toLowerCase().includes(state.searchText.toLowerCase()),
     );
 
     const filterFilms = filterText.map(makeFilmCard);
