@@ -2,7 +2,6 @@ const labelDisplay = document.getElementById("displayed-films-label");
 const searchBox = document.getElementById("search");
 const selectedFilm = document.getElementById("film-selector");
 const selectedShow = document.getElementById("show-selector");
-const showLink = "https://api.tvmaze.com/shows";
 const main = document.querySelector("main");
 
 let state = {
@@ -12,10 +11,11 @@ let state = {
   selectedEpisode: "default",
   inputContainer: "default",
   selectedShow: "82",
+  mode: "show",
 };
 
 const fetchShows = async () => {
-  const response = await fetch(showLink);
+  const response = await fetch('https://api.tvmaze.com/shows');
   if(!response.ok) {
     throw new Error("Error Fetching Shows"); 
   }
@@ -109,36 +109,46 @@ function makeFilmCard({ name, season, number, image, summary }) {
 const render = () => {
   main.innerHTML = "";
 
-  if (state.selectedShow === "none") {
-    labelDisplay.textContent = "Displaying 0/0";
-    if (!state.isInitialLoad) {
-      main.innerHTML = "";
+  if (state.mode === "show") {
+    selectedFilm.style.display = "none"
+    labelDisplay.textContent = `Displaying ${state.showsList.length}/${state.showsList.length} show(s)`;
+    // display shows
+    main.innerHTML = "hi"
+  } 
+  else {
+    if (state.selectedShow === "none") {
+      labelDisplay.textContent = "Displaying 0/0";
+      if (!state.isInitialLoad) {
+        main.innerHTML = "";
+      }
+      return; 
+      }
+
+    if (state.inputContainer === "default") {
+      const filterText = state.films.filter(
+        (film) =>
+          film.name.toLowerCase().includes(state.searchText.toLowerCase()) ||
+          (film.summary).toLowerCase().includes(state.searchText.toLowerCase()),
+      );
+
+      const filterFilms = filterText.map(makeFilmCard);
+      main.append(...filterFilms);
+
+      labelDisplay.textContent = `Displaying ${filterText.length}/${state.films.length} episode(s)`;
+    } else if (state.inputContainer === "select") {
+      const filterSelected = state.films.filter(
+        (film) => film.name === state.selectedEpisode,
+      );
+
+      const filterSelectedEpisode = filterSelected.map(makeFilmCard);
+      main.append(...filterSelectedEpisode);
+
+      labelDisplay.textContent = `Displaying ${filterSelectedEpisode.length}/${state.films.length}`;
     }
-    return; 
-    }
+  };
+}
 
-  if (state.inputContainer === "default") {
-    const filterText = state.films.filter(
-      (film) =>
-        film.name.toLowerCase().includes(state.searchText.toLowerCase()) ||
-        (film.summary).toLowerCase().includes(state.searchText.toLowerCase()),
-    );
-
-    const filterFilms = filterText.map(makeFilmCard);
-    main.append(...filterFilms);
-
-    labelDisplay.textContent = `Displaying ${filterText.length}/${state.films.length}`;
-  } else if (state.inputContainer === "select") {
-    const filterSelected = state.films.filter(
-      (film) => film.name === state.selectedEpisode,
-    );
-
-    const filterSelectedEpisode = filterSelected.map(makeFilmCard);
-    main.append(...filterSelectedEpisode);
-
-    labelDisplay.textContent = `Displaying ${filterSelectedEpisode.length}/${state.films.length}`;
-  }
-};
+  
 
 render();
 
@@ -192,7 +202,6 @@ const handleShowSelection = async (event) => {
   }
   return;
   }
-
 
   try {
     state.films = await fetchFilms();
