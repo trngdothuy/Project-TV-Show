@@ -1,34 +1,43 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TV Show Project | Trang Do Thuy (@trngdothuy)</title>
-    <link href="style.css" rel="stylesheet" />
-    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-  </head>
 
-  <body>
-    <h1>TV Show</h1>
-    <p class="data-source">
-      <i>data from <a href="http://TVMaze.com">TVMaze.com</a></i>
-    </p>
-    <div id="search-holder">
-      <select name="films" id="film-selector">
-        <option value="default">Choose an episode</option>
-      </select>
-      <label for="search">Search Films: </label>
-      <input type="text" id="search" placeholder="Search Episode" />
-      <label for="displayed-items" id="displayed-films"></label>
-    </div>
-    <!-- <div id="root"></div> -->
-    <!--I remove this since I added the main, so it will not be doubled. I just move the id so the style will also go with it-->
-    <main id="root"></main>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TV Show Project | Trang Do Thuy (@trngdothuy)</title>
+  <link href="style.css" rel="stylesheet" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+</head>
 
-    <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
-    <script src="episodes.js"></script>
+<body>
+  <h1>TV Show</h1>
+  <p class="data-source">
+    <i>data from <a href="http://TVMaze.com">TVMaze.com</a></i>
+  </p>
 
-    <!-- Loads YOUR javascript code -->
-    <script type="module" src="script.js"></script>
-  </body>
+  <div id="search-holder">
+
+    <select name="shows" id="show-selector">
+      <option value="default">Choose a Show</option>
+    </select>
+
+    <select name="films" id="film-selector">
+      <option value="default">Choose an episode</option>
+    </select>
+
+    <label for="search">Search Films: </label>
+    <input type="text" id="search" placeholder="Search Episode" />
+    <label for="displayed-items" id="displayed-films"></label>
+  </div>
+  <!-- <div id="root"></div> -->
+  <!--I remove this since I added the main, so it will not be doubled. I just move the id so the style will also go with it-->
+  <main id="root"></main>
+
+  <!-- Loads a provided function called getAllEpisodes() which returns all episodes -->
+  <!-- <script src="episodes.js"></script> -->
+
+  <!-- Loads YOUR javascript code -->
+  <script type="module" src="script.js"></script>
+</body>
+
 </html>
