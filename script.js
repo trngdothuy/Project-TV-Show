@@ -10,7 +10,7 @@ let state = {
   searchText: "",
   selectedEpisode: "default",
   inputContainer: "default",
-  selectedShow: "82",
+  selectedShowInput: "82",
   mode: "show",
 };
 
@@ -48,7 +48,7 @@ function addShowSelection() {
 }
 
 const fetchFilms = async () => {
-  const url = `https://api.tvmaze.com/shows/${state.selectedShow}/episodes`;
+  const url = `https://api.tvmaze.com/shows/${state.selectedShowInput}/episodes`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Response status: ${response.status}`);
@@ -147,9 +147,10 @@ function makeShowCard({ name, image, summary, genres, status, rating, runtime })
 
 function renderShow() {
   selectedFilm.style.display = "none"
+  selectedShow.style.display = "block"
   labelDisplay.textContent = `Displaying ${state.showsList.length}/${state.showsList.length} show(s)`;
 
-  if (state.inputContainer === "default") {
+  // if (state.inputContainer === "default") {
   const filterText = state.showsList.filter(
       (show) =>
         show.name.toLowerCase().includes(state.searchText.toLowerCase()) ||
@@ -160,18 +161,18 @@ function renderShow() {
     main.append(...filterShow);
 
   labelDisplay.textContent = `Displaying ${filterText.length}/${state.showsList.length} episode(s)`;
-  } 
+  // } 
   // use show selector
-  else if (state.inputContainer === "select") {
-      const filterSelected = state.showsList.filter(
-        (show) => show.name === state.selectedEpisode,
-      );
+  // else if (state.inputContainer === "select") {
+  //     const filterSelected = state.showsList.filter(
+  //       (show) => show.name === state.selectedEpisode,
+  //     );
 
-      const filterSelectedEpisode = filterSelected.map(makeFilmCard);
-      main.append(...filterSelectedEpisode);
+  //     const filterSelectedEpisode = filterSelected.map(makeFilmCard);
+  //     main.append(...filterSelectedEpisode);
 
-      labelDisplay.textContent = `Displaying ${filterSelectedEpisode.length}/${state.films.length}`;
-    }
+  //     labelDisplay.textContent = `Displaying ${filterSelectedEpisode.length}/${state.films.length}`;
+  //   }
 }
 
 const render = () => {
@@ -180,7 +181,9 @@ const render = () => {
   if (state.mode === "show") {
     renderShow()
   } else {
-    if (state.selectedShow === "none") {
+    selectedShow.style.display = "none"
+    selectedFilm.style.display = "block"
+    if (state.selectedShowInput === "none") {
       labelDisplay.textContent = "Displaying 0/0";
       if (!state.isInitialLoad) {
         main.innerHTML = "";
@@ -245,14 +248,15 @@ function resetEpisodeSelector() {
 
 const handleShowSelection = async (event) => {
   const showId = event.target.value;
-  state.selectedShow = showId;
+  state.selectedShowInput = showId;
   state.selectedEpisode = "default";
   state.searchText = "";
   state.inputContainer = "default";
+  state.mode = "film"
   document.getElementById("search").value = "";
 
   if (showId === "default") {
-  state.selectedShow = "82";    //showing the same episodes from the very first time the page loads.
+  state.selectedShowInput = "82";    //showing the same episodes from the very first time the page loads.
 
   try {
     state.films = await fetchFilms;
