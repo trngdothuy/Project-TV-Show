@@ -19,8 +19,6 @@ const fetchShows = async () => {
   if(!response.ok) {
     throw new Error("Error Fetching Shows"); 
   }
-  // const shows = await response.json();
-  // console.log("shows:", + shows);
   return await response.json();
 }
 
@@ -290,13 +288,11 @@ addShowSelection();
 
 container.addEventListener("click", (e) => {
   const link = e.target.closest('.show-card-div')
-  console.log(link.id)
   if (!link) return
 
   e.preventDefault()
 
   state.selectedShowInput = link.id
   state.mode = 'film'
-  console.log(state)
   displayFilms()
 })
