@@ -11,7 +11,7 @@ let state = {
   selectedEpisode: "default",
   inputContainer: "default",
   selectedShowInput: "82",
-  mode: "show",
+  mode: "shows",
 };
 
 const fetchShows = async () => {
@@ -70,6 +70,12 @@ fetchFilms()
 
 // make film selector
 function addFilmSelection() {
+  const seeAllShowOption = document.createElement("option")
+  seeAllShowOption.value = "shows"
+  seeAllShowOption.textContent = 'See all shows'
+
+  selectedFilm.append(seeAllShowOption);
+
   state.films.forEach((film) => {
     const option = document.createElement("option");
     option.value = film.name;
@@ -178,7 +184,7 @@ function renderShow() {
 const render = () => {
   main.innerHTML = "";
 
-  if (state.mode === "show") {
+  if (state.mode === "shows") {
     renderShow()
   } else {
     selectedShow.style.display = "none"
@@ -229,7 +235,10 @@ const handleSelection = (event) => {
   state.selectedEpisode = event.target.value;
   if (state.selectedEpisode === "default") {
     state.inputContainer = "default";
-  } else state.inputContainer = "select";
+  } else if (state.selectedEpisode === "shows") {
+    state.mode = "shows"
+  }
+  else state.inputContainer = "select";
   render();
 };
 selectedFilm.addEventListener("change", handleSelection);
