@@ -2,7 +2,7 @@ const labelDisplay = document.getElementById("displayed-films-label");
 const searchBox = document.getElementById("search");
 const selectedFilm = document.getElementById("film-selector");
 const selectedShow = document.getElementById("show-selector");
-const main = document.querySelector("main");
+const container = document.getElementById("container")
 
 let state = {
   showsList: [],
@@ -56,7 +56,8 @@ const fetchFilms = async () => {
   return await response.json();
 };
 
-fetchFilms()
+async function displayFilms() {
+  await fetchFilms()
   .then((films) => {
     state.films = films;
     render();
@@ -67,6 +68,9 @@ fetchFilms()
     document.querySelector("main").innerHTML =
       "Failed to load data. Please try again later.";
   });
+}
+
+displayFilms()
 
 // make film selector
 function addFilmSelection() {
@@ -166,13 +170,13 @@ function renderShow() {
     );
 
   const filterShow = filterText.map(makeShowCard);
-    main.append(...filterShow);
+  container.append(...filterShow)
 
   labelDisplay.textContent = `Displaying ${filterText.length}/${state.showsList.length} episode(s)`;
 }
 
 const render = () => {
-  main.innerHTML = "";
+  container.innerHTML = "";
 
   if (state.mode === "shows") {
     renderShow()
@@ -182,7 +186,7 @@ const render = () => {
     if (state.selectedShowInput === "none") {
       labelDisplay.textContent = "Displaying 0/0";
       if (!state.isInitialLoad) {
-        main.innerHTML = "";
+        container.innerHTML = "";
       }
       return; 
       }
@@ -195,7 +199,7 @@ const render = () => {
       );
 
       const filterFilms = filterText.map(makeFilmCard);
-      main.append(...filterFilms);
+      container.append(...filterFilms);
 
       labelDisplay.textContent = `Displaying ${filterText.length}/${state.films.length} episode(s)`;
     } else if (state.inputContainer === "select") {
@@ -204,7 +208,7 @@ const render = () => {
       );
 
       const filterSelectedEpisode = filterSelected.map(makeFilmCard);
-      main.append(...filterSelectedEpisode);
+      container.append(...filterSelectedEpisode);
 
       labelDisplay.textContent = `Displaying ${filterSelectedEpisode.length}/${state.films.length}`;
     }
@@ -283,3 +287,16 @@ const handleShowSelection = async (event) => {
 selectedShow.addEventListener("change", handleShowSelection);
 
 addShowSelection();
+
+container.addEventListener("click", (e) => {
+  const link = e.target.closest('.show-card-div')
+  console.log(link.id)
+  if (!link) return
+
+  e.preventDefault()
+
+  state.selectedShowInput = link.id
+  state.mode = 'film'
+  console.log(state)
+  displayFilms()
+})

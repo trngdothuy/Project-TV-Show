@@ -8,7 +8,7 @@ h1 {
   color: black;
 }
 
-#root {
+#container {
   background: rgb(231, 228, 228);
   display: flex;
   flex-direction: row;
