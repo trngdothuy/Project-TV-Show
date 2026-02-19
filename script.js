@@ -106,16 +106,80 @@ function makeFilmCard({ name, season, number, image, summary }) {
   return filmCardDiv;
 }
 
+function makeShowCard({ name, image, summary, genres, status, rating, runtime }) {
+  const showCardDiv = document.createElement("div");
+  showCardDiv.className = "show-card-div";
+  let showTitleDiv = document.createElement("div");
+  showTitleDiv.className = "show-title-div";
+  let showDescriptionDiv = document.createElement("div");
+  showDescriptionDiv.className = "show-description-div";
+
+  let showTitle = document.createElement("h1");
+  showTitle.textContent = `${name}`;
+
+  let showImg = document.createElement("img");
+  showImg.src = image.medium;
+  showImg.alt = name;
+  showImg.style.marginBottom = "2rem";
+
+  let showDescription = document.createElement("div");
+  showDescription.className="show-description"
+  showDescription.innerHTML = summary;
+
+  let showRatingDiv = document.createElement("div");
+  showRatingDiv.className="show-rating-div"
+  let showRate = document.createElement("p")
+  showRate.innerHTML = `<b>Rated:</b> ${rating.average}`;
+  let showGenre = document.createElement("p")
+  showGenre.innerHTML = `<b>Genres:</b> ${genres.join(", ")}`;
+  let showStatus = document.createElement("p")
+  showStatus.innerHTML = `<b>Status:</b> ${status}`;
+  let showRuntime = document.createElement("p")
+  showRuntime.innerHTML = `<b>Runtime: </b>${runtime}`;
+
+  showTitleDiv.append(showTitle);
+  showRatingDiv.append(showRate, showGenre, showStatus, showRuntime);
+  showDescriptionDiv.append(showImg, showDescription, showRatingDiv);
+  showCardDiv.append(showTitleDiv, showDescriptionDiv);
+
+  return showCardDiv;
+}
+
+function renderShow() {
+  selectedFilm.style.display = "none"
+  labelDisplay.textContent = `Displaying ${state.showsList.length}/${state.showsList.length} show(s)`;
+
+  if (state.inputContainer === "default") {
+  const filterText = state.showsList.filter(
+      (show) =>
+        show.name.toLowerCase().includes(state.searchText.toLowerCase()) ||
+        show.summary.toLowerCase().includes(state.searchText.toLowerCase()) || show.genres.includes(state.searchText.toLowerCase()),
+    );
+
+  const filterShow = filterText.map(makeShowCard);
+    main.append(...filterShow);
+
+  labelDisplay.textContent = `Displaying ${filterText.length}/${state.showsList.length} episode(s)`;
+  } 
+  // use show selector
+  else if (state.inputContainer === "select") {
+      const filterSelected = state.showsList.filter(
+        (show) => show.name === state.selectedEpisode,
+      );
+
+      const filterSelectedEpisode = filterSelected.map(makeFilmCard);
+      main.append(...filterSelectedEpisode);
+
+      labelDisplay.textContent = `Displaying ${filterSelectedEpisode.length}/${state.films.length}`;
+    }
+}
+
 const render = () => {
   main.innerHTML = "";
 
   if (state.mode === "show") {
-    selectedFilm.style.display = "none"
-    labelDisplay.textContent = `Displaying ${state.showsList.length}/${state.showsList.length} show(s)`;
-    // display shows
-    main.innerHTML = "hi"
-  } 
-  else {
+    renderShow()
+  } else {
     if (state.selectedShow === "none") {
       labelDisplay.textContent = "Displaying 0/0";
       if (!state.isInitialLoad) {
@@ -146,9 +210,7 @@ const render = () => {
       labelDisplay.textContent = `Displaying ${filterSelectedEpisode.length}/${state.films.length}`;
     }
   };
-}
-
-  
+}  
 
 render();
 
