@@ -8,7 +8,7 @@ h1 {
   color: black;
 }
 
-#root {
+#container {
   background: rgb(231, 228, 228);
   display: flex;
   flex-direction: row;
@@ -46,6 +46,32 @@ h1 {
   justify-content: center;
 }
 
+.show-card-div {
+  background-color: aliceblue;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem 2rem;
+  border-radius: 25px;
+  border-style: outset grey;
+  width: 65rem;
+}
+
+.show-description-div {
+  padding: 0 2rem;
+  display: flex;
+}
+
+.show-img {
+  width: 210px;
+  height: 295px;
+}
+
+.show-description {
+  width: 20rem;
+  padding: 2rem;
+}
+
 p {
   font-size: 0, 9rem;
   color: grey;
@@ -59,11 +85,15 @@ p {
   justify-content: center;
 }
 
-#displayed-films {
+#displayed-films-label {
   padding: 0 10px;
 }
 
 #film-selector {
+  margin: 0 10px;
+}
+
+#show-selector {
   margin: 0 10px;
 }
 

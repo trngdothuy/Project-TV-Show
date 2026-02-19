@@ -1,51 +1,52 @@
+const labelDisplay = document.getElementById("displayed-films-label");
+const searchBox = document.getElementById("search");
+const selectedFilm = document.getElementById("film-selector");
+const selectedShow = document.getElementById("show-selector");
+const container = document.getElementById("container")
+
 let state = {
-  showslist: [],
+  showsList: [],
   films: [],
   searchText: "",
   selectedEpisode: "default",
   inputContainer: "default",
-  selectedShow: "82",
+  selectedShowInput: "82",
+  mode: "shows",
 };
 
-
 const fetchShows = async () => {
-  const showlink = "https://api.tvmaze.com/shows";
-    const response = await fetch(showlink);
-    if(!response.ok) {
-      throw new Error("Error Fetching Shows"); 
-    }
-    // const shows = await response.json();
-    // console.log("shows:", + shows);
-    return await response.json();
+  const response = await fetch('https://api.tvmaze.com/shows');
+  if(!response.ok) {
+    throw new Error("Error Fetching Shows"); 
+  }
+  return await response.json();
 }
 
 fetchShows()
   .then((showArray) => {
-    state.showslist = showArray;
+    state.showsList = showArray;
     render();
-    makeshowSelectionAdded();
+    addShowSelection();
   }) 
   .catch((error) => {
     console.log(error);
     document.querySelector("main").innerHTML = "Failed to load data. Please try again later";
   });
 
-  function makeshowSelectionAdded() {
-  const selectshowContainer = document.getElementById("show-selector");
-  selectshowContainer.innerHTML = '<option value="default">Choose a Show</option>';
+// make show selector
+function addShowSelection() {
+  selectedShow.innerHTML = '<option value="default">Choose a Show</option>';
 
-  sortShowsAlphabetically(state.showslist).forEach((show) => {
+  sortShowsAlphabetically(state.showsList).forEach((show) => {
     const option = document.createElement("option");
     option.value = String(show.id);
     option.textContent = show.name;
-    selectshowContainer.appendChild(option);
+    selectedShow.appendChild(option);
   });
 }
 
-
-
 const fetchFilms = async () => {
-  const url = "https://api.tvmaze.com/shows/82/episodes";
+  const url = `https://api.tvmaze.com/shows/${state.selectedShowInput}/episodes`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Response status: ${response.status}`);
@@ -53,31 +54,37 @@ const fetchFilms = async () => {
   return await response.json();
 };
 
-fetchFilms()
+async function displayFilms() {
+  await fetchFilms()
   .then((films) => {
     state.films = films;
     render();
-    makeSelection();
+    addFilmSelection();
   })
   .catch((error) => {
     console.log(error);
     document.querySelector("main").innerHTML =
       "Failed to load data. Please try again later.";
   });
+}
 
-//SELECTION FUNCTION FILM
-function makeSelection() {
-  const selectfilmContainer = document.getElementById("film-selector");
+displayFilms()
+
+// make film selector
+function addFilmSelection() {
+  const seeAllShowOption = document.createElement("option")
+  seeAllShowOption.value = "shows"
+  seeAllShowOption.textContent = 'See all shows'
+
+  selectedFilm.append(seeAllShowOption);
 
   state.films.forEach((film) => {
     const option = document.createElement("option");
     option.value = film.name;
     option.textContent = `S${film.season.toString().padStart(2, "0")}E${film.number.toString().padStart(2, "0")} - ${film.name}`;
-    selectfilmContainer.appendChild(option);
+    selectedFilm.appendChild(option);
   });
 }
-
-
 
 function makeFilmCard({ name, season, number, image, summary }) {
   const filmCardDiv = document.createElement("div");
@@ -107,123 +114,166 @@ function makeFilmCard({ name, season, number, image, summary }) {
   return filmCardDiv;
 }
 
-const render = () => {
-  const main = document.querySelector("main");
-  main.innerHTML = "";
+function makeShowCard({ id, name, image, summary, genres, status, rating, runtime }) {
+  const showCardDiv = document.createElement("div");
+  showCardDiv.className = "show-card-div";
+  showCardDiv.role = 'button';
+  showCardDiv.id = `${id}`;
+  let showTitleDiv = document.createElement("div");
+  showTitleDiv.className = "show-title-div";
+  let showDescriptionDiv = document.createElement("div");
+  showDescriptionDiv.className = "show-description-div";
 
-  if (state.selectedShow === "default") {
-  const labeldisplay = document.getElementById("displayed-films");
-  labeldisplay.textContent = "Displaying 0/0";
+  let showTitle = document.createElement("h1");
+  showTitle.textContent = `${name}`;
 
-  if (!state.isInitialLoad) {
-    main.innerHTML = "";
-  }
+  let showImg = document.createElement("img");
+  showImg.src = image.medium;
+  showImg.alt = name;
+  showImg.style.marginBottom = "2rem";
+  showImg.className = 'show-img'
 
-  return;
+  let showDescription = document.createElement("div");
+  showDescription.className="show-description"
+  showDescription.innerHTML = summary;
+
+  let showRatingDiv = document.createElement("div");
+  showRatingDiv.className="show-rating-div"
+  let showRate = document.createElement("p")
+  showRate.innerHTML = `<b>Rated:</b> ${rating.average}`;
+  let showGenre = document.createElement("p")
+  showGenre.innerHTML = `<b>Genres:</b> ${genres.join(", ")}`;
+  let showStatus = document.createElement("p")
+  showStatus.innerHTML = `<b>Status:</b> ${status}`;
+  let showRuntime = document.createElement("p")
+  showRuntime.innerHTML = `<b>Runtime: </b>${runtime}`;
+
+  showTitleDiv.append(showTitle);
+  showRatingDiv.append(showRate, showGenre, showStatus, showRuntime);
+  showDescriptionDiv.append(showImg, showDescription, showRatingDiv);
+  showCardDiv.append(showTitleDiv, showDescriptionDiv);
+
+  return showCardDiv;
 }
 
+function renderShow() {
+  selectedFilm.style.display = "none"
+  selectedShow.style.display = "block"
+  labelDisplay.textContent = `Displaying ${state.showsList.length}/${state.showsList.length} show(s)`;
 
-  if (state.inputContainer === "default") {
-    const filterText = state.films.filter(
-      (film) =>
-        film.name.toLowerCase().includes(state.searchText.toLowerCase()) ||
-        (film.summary).toLowerCase().includes(state.searchText.toLowerCase()),
+  const filterText = sortShowsAlphabetically(state.showsList).filter(
+      (show) =>
+        show.name.toLowerCase().includes(state.searchText.toLowerCase()) ||
+        show.summary.toLowerCase().includes(state.searchText.toLowerCase()) || show.genres.includes(state.searchText.toLowerCase()),
     );
 
-    const filterFilms = filterText.map(makeFilmCard);
-    main.append(...filterFilms);
+  const filterShow = filterText.map(makeShowCard);
+  container.append(...filterShow)
 
-    const labeldisplay = document.getElementById("displayed-films");
-    labeldisplay.textContent = `Displaying ${filterText.length}/${state.films.length}`;
-  } else if (state.inputContainer === "select") {
-    const filterSelected = state.films.filter(
-      (film) => film.name === state.selectedEpisode,
-    );
+  labelDisplay.textContent = `Displaying ${filterText.length}/${state.showsList.length} episode(s)`;
+}
 
-    const filterSelectedEpisode = filterSelected.map(makeFilmCard);
-    main.append(...filterSelectedEpisode);
+const render = () => {
+  container.innerHTML = "";
 
-    const labeldisplay = document.getElementById("displayed-films");
-    labeldisplay.textContent = `Displaying ${filterSelectedEpisode.length}/${state.films.length}`;
-  }
-};
+  if (state.mode === "shows") {
+    renderShow()
+  } else {
+    selectedShow.style.display = "none"
+    selectedFilm.style.display = "block"
+    if (state.selectedShowInput === "none") {
+      labelDisplay.textContent = "Displaying 0/0";
+      if (!state.isInitialLoad) {
+        container.innerHTML = "";
+      }
+      return; 
+      }
+
+    if (state.inputContainer === "default") {
+      const filterText = state.films.filter(
+        (film) =>
+          film.name.toLowerCase().includes(state.searchText.toLowerCase()) ||
+          (film.summary).toLowerCase().includes(state.searchText.toLowerCase()),
+      );
+
+      const filterFilms = filterText.map(makeFilmCard);
+      container.append(...filterFilms);
+
+      labelDisplay.textContent = `Displaying ${filterText.length}/${state.films.length} episode(s)`;
+    } else if (state.inputContainer === "select") {
+      const filterSelected = state.films.filter(
+        (film) => film.name === state.selectedEpisode,
+      );
+
+      const filterSelectedEpisode = filterSelected.map(makeFilmCard);
+      container.append(...filterSelectedEpisode);
+
+      labelDisplay.textContent = `Displaying ${filterSelectedEpisode.length}/${state.films.length}`;
+    }
+  };
+}  
 
 render();
 
-const searchBox = document.getElementById("search");
 const handleSearch = (event) => {
   state.searchText = event.target.value;
   state.inputContainer = "default";
   render();
 };
-
 searchBox.addEventListener("input", handleSearch);
 
-//handleSelection
-const selected = document.getElementById("film-selector");
+// handleSelection
 const handleSelection = (event) => {
   state.selectedEpisode = event.target.value;
   if (state.selectedEpisode === "default") {
     state.inputContainer = "default";
-  } else state.inputContainer = "select";
+  } else if (state.selectedEpisode === "shows") {
+    state.mode = "shows"
+  }
+  else state.inputContainer = "select";
   render();
 };
+selectedFilm.addEventListener("change", handleSelection);
 
-selected.addEventListener("change", handleSelection);
-
-
-//getting the films by ID per show
-const fetchFilmsByShow = async (showId) => {
-  const url = `https://api.tvmaze.com/shows/${showId}/episodes`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Response status: ${response.status}`);
-  }
-  return await response.json();
-};
-
-//sorting shows
+// sorting shows
 function sortShowsAlphabetically(shows) {
   return [...shows].sort((a, b) =>
     a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
   );
 }
 
-//reseting the selector
+// reseting the selector
 function resetEpisodeSelector() {
-  const selectfilmContainer = document.getElementById("film-selector");
-  selectfilmContainer.innerHTML = '<option value="default">Choose an episode</option>';
+  selectedFilm.innerHTML = '<option value="default">Choose an episode</option>';
 }
 
-const showSelected = document.getElementById("show-selector");
 const handleShowSelection = async (event) => {
   const showId = event.target.value;
-  state.selectedShow = showId;
+  state.selectedShowInput = showId;
   state.selectedEpisode = "default";
   state.searchText = "";
   state.inputContainer = "default";
+  state.mode = "film"
   document.getElementById("search").value = "";
 
   if (showId === "default") {
-  state.selectedShow = "82";    //showing the same episodes from the very first time the page loads.
+  state.selectedShowInput = "82";    //showing the same episodes from the very first time the page loads.
 
   try {
-    state.films = await fetchFilmsByShow("82");
+    state.films = await fetchFilms;
     resetEpisodeSelector();
-    makeSelection();
+    addFilmSelection();
     render();
   } catch (error) {
     console.log(error);
   }
-
   return;
-}
-
+  }
 
   try {
-    state.films = await fetchFilmsByShow(showId);
+    state.films = await fetchFilms();
     resetEpisodeSelector();
-    makeSelection();
+    addFilmSelection();
     render();
   } catch (error) {
     console.log(error);
@@ -232,7 +282,17 @@ const handleShowSelection = async (event) => {
   }
 };
 
-showSelected.addEventListener("change", handleShowSelection);
+selectedShow.addEventListener("change", handleShowSelection);
 
+addShowSelection();
 
-makeshowSelectionAdded();
+container.addEventListener("click", (e) => {
+  const link = e.target.closest('.show-card-div')
+  if (!link) return
+
+  e.preventDefault()
+
+  state.selectedShowInput = link.id
+  state.mode = 'film'
+  displayFilms()
+})
