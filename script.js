@@ -112,9 +112,11 @@ function makeFilmCard({ name, season, number, image, summary }) {
   return filmCardDiv;
 }
 
-function makeShowCard({ name, image, summary, genres, status, rating, runtime }) {
+function makeShowCard({ id, name, image, summary, genres, status, rating, runtime }) {
   const showCardDiv = document.createElement("div");
   showCardDiv.className = "show-card-div";
+  showCardDiv.role = 'button';
+  showCardDiv.id = `${id}`;
   let showTitleDiv = document.createElement("div");
   showTitleDiv.className = "show-title-div";
   let showDescriptionDiv = document.createElement("div");
@@ -127,6 +129,7 @@ function makeShowCard({ name, image, summary, genres, status, rating, runtime })
   showImg.src = image.medium;
   showImg.alt = name;
   showImg.style.marginBottom = "2rem";
+  showImg.className = 'show-img'
 
   let showDescription = document.createElement("div");
   showDescription.className="show-description"
@@ -156,8 +159,7 @@ function renderShow() {
   selectedShow.style.display = "block"
   labelDisplay.textContent = `Displaying ${state.showsList.length}/${state.showsList.length} show(s)`;
 
-  // if (state.inputContainer === "default") {
-  const filterText = state.showsList.filter(
+  const filterText = sortShowsAlphabetically(state.showsList).filter(
       (show) =>
         show.name.toLowerCase().includes(state.searchText.toLowerCase()) ||
         show.summary.toLowerCase().includes(state.searchText.toLowerCase()) || show.genres.includes(state.searchText.toLowerCase()),
@@ -167,18 +169,6 @@ function renderShow() {
     main.append(...filterShow);
 
   labelDisplay.textContent = `Displaying ${filterText.length}/${state.showsList.length} episode(s)`;
-  // } 
-  // use show selector
-  // else if (state.inputContainer === "select") {
-  //     const filterSelected = state.showsList.filter(
-  //       (show) => show.name === state.selectedEpisode,
-  //     );
-
-  //     const filterSelectedEpisode = filterSelected.map(makeFilmCard);
-  //     main.append(...filterSelectedEpisode);
-
-  //     labelDisplay.textContent = `Displaying ${filterSelectedEpisode.length}/${state.films.length}`;
-  //   }
 }
 
 const render = () => {

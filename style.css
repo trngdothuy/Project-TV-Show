@@ -54,11 +54,17 @@ h1 {
   margin: 1rem 2rem;
   border-radius: 25px;
   border-style: outset grey;
+  width: 65rem;
 }
 
 .show-description-div {
   padding: 0 2rem;
   display: flex;
+}
+
+.show-img {
+  width: 210px;
+  height: 295px;
 }
 
 .show-description {
